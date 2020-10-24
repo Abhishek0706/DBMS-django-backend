@@ -7,6 +7,7 @@ import json
 
 # http://127.0.0.1:8000/feedback/?hostel=rajiv
 from rest_framework import status
+from rest_framework.parsers import JSONParser
 
 
 def get_feedback(request):
@@ -41,14 +42,11 @@ def get_feedback(request):
 def add_feedback(request):
     if request.method != 'POST':
         return HttpResponse(content='only post request allowed', status=status.HTTP_400_BAD_REQUEST)
+    _data = JSONParser().parse(request)
+    student_id = _data.get('student_id', None)
+    title = _data.get('title', None)
+    feedback_description = _data.get('feedback_description', None)
 
-    student_id = request.POST.get('student_id', None)
-    title = request.POST.get('title', None)
-    feedback_description = request.POST.get('feedback_description', None)
-    # raw_query = "INSERT INTO public.feedback (id , date_time, student_id, title, feedback_description) " \
-    #             "VALUES (DEFAULT, NOW()::TIMESTAMP(0), '%s', '%s', '%s')" % (student_id, title, feedback_description)
-    #
-    # print(raw_query)
     if (student_id is None) or (title is None) or (feedback_description is None):
         return HttpResponse(content="all data not provided : student_id, title, feedback_description",
                             status=status.HTTP_400_BAD_REQUEST)

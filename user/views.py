@@ -4,6 +4,7 @@ import json
 
 # Create your views here.
 from rest_framework import status
+from rest_framework.parsers import JSONParser
 
 
 def get_student(request):
@@ -58,15 +59,15 @@ def get_student(request):
 def add_student(request):
     if request.method != 'POST':
         return HttpResponse(content='only post request allowed', status=status.HTTP_400_BAD_REQUEST)
-
-    enrollment_no = request.POST.get('enrollment_no', None)
-    full_name = request.POST.get('full_name', None)
-    phone_no = request.POST.get('phone_no', None)
-    dateOfBirth = request.POST.get('date_of_birth', None)
-    bhawan = request.POST.get('hostel', None)
-    year_no = request.POST.get('year_no', None)
-    branch = request.POST.get('branch', None)
-    email = request.POST.get('email', None)
+    _data = JSONParser().parse(request)
+    enrollment_no = _data.get('enrollment_no', None)
+    full_name = _data.get('full_name', None)
+    phone_no = _data.get('phone_no', None)
+    dateOfBirth = _data.get('date_of_birth', None)
+    bhawan = _data.get('hostel', None)
+    year_no = _data.get('year_no', None)
+    branch = _data.get('branch', None)
+    email = _data.get('email', None)
 
     if (enrollment_no is None) or (full_name is None) or (phone_no is None) or (dateOfBirth is None) or (
             bhawan is None) or (year_no is None) or (branch is None) or (email is None):
@@ -165,13 +166,13 @@ def get_worker(request):
 def add_worker(request):
     if request.method != 'POST':
         return HttpResponse(content='only post request allowed', status=status.HTTP_400_BAD_REQUEST)
-
-    enrollment_no = request.POST.get('enrollment_no', None)
-    full_name = request.POST.get('full_name', None)
-    phone_no = request.POST.get('phone_no', None)
-    dateOfBirth = request.POST.get('date_of_birth', None)
-    bhawan = request.POST.get('hostel', None)
-    worker_role = request.POST.get('worker_role', None)
+    _data = JSONParser().parse(request)
+    enrollment_no = _data.get('enrollment_no', None)
+    full_name = _data.get('full_name', None)
+    phone_no = _data.get('phone_no', None)
+    dateOfBirth = _data.get('date_of_birth', None)
+    bhawan = _data.get('hostel', None)
+    worker_role = _data.get('worker_role', None)
 
     if (enrollment_no is None) or (full_name is None) or (phone_no is None) or (dateOfBirth is None) or (
             bhawan is None) or (worker_role is None):
@@ -254,10 +255,12 @@ def add_workerrole(request):
     if request.method != 'POST':
         return HttpResponse(content='only post request allowed', status=status.HTTP_400_BAD_REQUEST)
 
-    worker_role = request.POST.get('worker_role', None)
-    salary = request.POST.get('salary', None)
-    shift_start = request.POST.get('shift_start', None)
-    shift_end = request.POST.get('shift_end', None)
+    _data = JSONParser().parse(request)
+
+    worker_role = _data.get('worker_role', None)
+    salary = _data.get('salary', None)
+    shift_start = _data.get('shift_start', None)
+    shift_end = _data.get('shift_end', None)
 
     if (worker_role is None) or (salary is None) or (shift_start is None) or (shift_end is None):
         return HttpResponse(content="all data not provided : worker_role, salary, shift_start, shift_end",
