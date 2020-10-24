@@ -17,7 +17,7 @@ def get_student(request):
     if hostel is not None:
         with connection.cursor() as cursor:
             cursor.execute("""
-            SELECT public.student.enrollment_no , year_no, branch, email, full_name, phone_no, dateofbirth, bhawan
+            SELECT public.student.enrollment_no , year_no, branch, email, full_name, phone_no, date_of_birth, bhawan
             FROM public.student INNER JOIN public.userdata
             ON public.student.enrollment_no = public.userdata.enrollment_no 
             WHERE LOWER(bhawan) LIKE LOWER(%s) ;
@@ -28,7 +28,7 @@ def get_student(request):
     elif enrollment_no is not None:
         with connection.cursor() as cursor:
             cursor.execute("""
-            SELECT public.student.enrollment_no , year_no, branch, email, full_name, phone_no, dateofbirth, bhawan
+            SELECT public.student.enrollment_no , year_no, branch, email, full_name, phone_no, date_of_birth, bhawan
             FROM public.student INNER JOIN public.userdata
             ON public.student.enrollment_no = public.userdata.enrollment_no
             WHERE public.student.enrollment_no = %s ;
@@ -39,7 +39,7 @@ def get_student(request):
     else:
         with connection.cursor() as cursor:
             cursor.execute("""
-            SELECT public.student.enrollment_no , year_no, branch, email, full_name, phone_no, dateofbirth, bhawan
+            SELECT public.student.enrollment_no , year_no, branch, email, full_name, phone_no, date_of_birth, bhawan
             FROM public.student INNER JOIN public.userdata
             ON public.student.enrollment_no = public.userdata.enrollment_no
             """)
@@ -66,13 +66,13 @@ def add_student(request):
     enrollment_no = _data.get('enrollment_no', None)
     full_name = _data.get('full_name', None)
     phone_no = _data.get('phone_no', None)
-    dateOfBirth = _data.get('date_of_birth', None)
+    date_of_birth = _data.get('date_of_birth', None)
     bhawan = _data.get('hostel', None)
     year_no = _data.get('year_no', None)
     branch = _data.get('branch', None)
     email = _data.get('email', None)
 
-    if (enrollment_no is None) or (full_name is None) or (phone_no is None) or (dateOfBirth is None) or (
+    if (enrollment_no is None) or (full_name is None) or (phone_no is None) or (date_of_birth is None) or (
             bhawan is None) or (year_no is None) or (branch is None) or (email is None):
         return HttpResponse(content="all data not provided : enrollment_no, full_name, phone_no, data_of_birth, "
                                     "hostel, year_no, branch, email", status=status.HTTP_400_BAD_REQUEST)
@@ -91,9 +91,9 @@ def add_student(request):
 
     with connection.cursor() as cursor:
         cursor.execute("""
-        INSERT INTO public.userdata (enrollment_no, full_name, phone_no, dateOfBirth, bhawan) 
+        INSERT INTO public.userdata (enrollment_no, full_name, phone_no, date_of_birth, bhawan) 
         VALUES (%s ,LOWER(%s), %s, TO_TIMESTAMP(%s, 'YYYY-MM-DD HH24:MI:SS'), LOWER(%s)) ;
-        """, (enrollment_no, full_name, phone_no, dateOfBirth, bhawan))
+        """, (enrollment_no, full_name, phone_no, date_of_birth, bhawan))
     connection.commit()
 
     with connection.cursor() as cursor:
@@ -117,7 +117,7 @@ def get_worker(request):
     if hostel is not None:
         with connection.cursor() as cursor:
             cursor.execute("""
-            SELECT public.worker.enrollment_no , public.worker.worker_role, full_name, phone_no, dateofbirth, 
+            SELECT public.worker.enrollment_no , public.worker.worker_role, full_name, phone_no, date_of_birth, 
             bhawan,salary, shift_start, shift_end 
             FROM (public.worker INNER JOIN public.userdata 
             ON public.worker.enrollment_no = public.userdata.enrollment_no) 
@@ -131,7 +131,7 @@ def get_worker(request):
     elif enrollment_no is not None:
         with connection.cursor() as cursor:
             cursor.execute("""
-            SELECT public.worker.enrollment_no , public.worker.worker_role, full_name, phone_no, dateofbirth, 
+            SELECT public.worker.enrollment_no , public.worker.worker_role, full_name, phone_no, date_of_birth, 
             bhawan,salary, shift_start, shift_end 
             FROM (public.worker INNER JOIN public.userdata
             ON public.worker.enrollment_no = public.userdata.enrollment_no)
@@ -145,7 +145,7 @@ def get_worker(request):
     else:
         with connection.cursor() as cursor:
             cursor.execute("""
-            SELECT public.worker.enrollment_no , public.worker.worker_role, full_name, phone_no, dateofbirth, 
+            SELECT public.worker.enrollment_no , public.worker.worker_role, full_name, phone_no, date_of_birth, 
             bhawan,salary, shift_start, shift_end 
             FROM (public.worker INNER JOIN public.userdata
             ON public.worker.enrollment_no = public.userdata.enrollment_no)
@@ -179,11 +179,11 @@ def add_worker(request):
     enrollment_no = _data.get('enrollment_no', None)
     full_name = _data.get('full_name', None)
     phone_no = _data.get('phone_no', None)
-    dateOfBirth = _data.get('date_of_birth', None)
+    date_of_birth = _data.get('date_of_birth', None)
     bhawan = _data.get('hostel', None)
     worker_role = _data.get('worker_role', None)
 
-    if (enrollment_no is None) or (full_name is None) or (phone_no is None) or (dateOfBirth is None) or (
+    if (enrollment_no is None) or (full_name is None) or (phone_no is None) or (date_of_birth is None) or (
             bhawan is None) or (worker_role is None):
         return HttpResponse(content="all data not provided : enrollment_no, full_name, phone_no, data_of_birth, "
                                     "hostel, worker_role", status=status.HTTP_400_BAD_REQUEST)
@@ -206,9 +206,9 @@ def add_worker(request):
 
     with connection.cursor() as cursor:
         cursor.execute("""
-        INSERT INTO public.userdata (enrollment_no, full_name, phone_no, dateOfBirth, bhawan) 
+        INSERT INTO public.userdata (enrollment_no, full_name, phone_no, date_of_birth, bhawan) 
         VALUES (%s ,LOWER(%s), %s, TO_TIMESTAMP(%s, 'YYYY-MM-DD HH24:MI:SS'), LOWER(%s)) ;
-        """, (enrollment_no, full_name, phone_no, dateOfBirth, bhawan))
+        """, (enrollment_no, full_name, phone_no, date_of_birth, bhawan))
     connection.commit()
 
     with connection.cursor() as cursor:
@@ -324,7 +324,7 @@ def get_login_info(request):
         _type = 'student'
         with connection.cursor() as cursor:
             cursor.execute("""
-            SELECT public.student.enrollment_no , year_no, branch, email, full_name, phone_no, dateofbirth, bhawan
+            SELECT public.student.enrollment_no , year_no, branch, email, full_name, phone_no, date_of_birth, bhawan
             FROM public.student INNER JOIN public.userdata
             ON public.student.enrollment_no = public.userdata.enrollment_no
             WHERE public.student.enrollment_no = %s ;
@@ -347,7 +347,7 @@ def get_login_info(request):
         _type = 'worker'
         with connection.cursor() as cursor:
             cursor.execute("""
-            SELECT public.worker.enrollment_no , public.worker.worker_role, full_name, phone_no, dateofbirth, 
+            SELECT public.worker.enrollment_no , public.worker.worker_role, full_name, phone_no, date_of_birth, 
             bhawan,salary, shift_start, shift_end 
             FROM (public.worker INNER JOIN public.userdata
             ON public.worker.enrollment_no = public.userdata.enrollment_no)
