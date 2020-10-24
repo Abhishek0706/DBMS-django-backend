@@ -3,7 +3,7 @@ from django.db import connection
 import json
 
 # Feedback Table is this
-# id | date_time | student_id | title | feedback_description
+# id | date_time | enrollment_no | title | feedback_description
 
 # http://127.0.0.1:8000/feedback/?hostel=rajiv
 from rest_framework import status
@@ -22,16 +22,16 @@ def get_feedback(request):
     else:
         with connection.cursor() as cursor:
             cursor.execute("""
-            SELECT id, date_time, student_id, title, feedback_description 
+            SELECT id, date_time, enrollment_no, title, feedback_description 
             FROM public.feedback INNER JOIN public.userdata 
-            ON public.feedback.student_id=public.userdata.enrollment_no 
+            ON public.feedback.enrollment_no=public.userdata.enrollment_no 
             WHERE LOWER(bhawan) LIKE LOWER(%s) ;
             """, (hostel,))
             rows = cursor.fetchall()
 
     result = []
     for row in rows:
-        temp = {'id': row[0], 'date_time': str(row[1]), 'student_id': row[2], 'title': row[3],
+        temp = {'id': row[0], 'date_time': str(row[1]), 'enrollment_no': row[2], 'title': row[3],
                 'feedback_description': row[4]}
         result.append(temp)
 
@@ -62,7 +62,7 @@ def add_feedback(request):
 
     with connection.cursor() as cursor:
         cursor.execute("""
-        INSERT INTO public.feedback (id , date_time, student_id, title, feedback_description) 
+        INSERT INTO public.feedback (id , date_time, enrollment_no, title, feedback_description) 
         VALUES (DEFAULT, NOW()::TIMESTAMP(0), %s, %s, %s);
         """, (enrollment_no, title, feedback_description))
     connection.commit()
