@@ -1,0 +1,11 @@
+.idea
+db.sqlite3
+*/__pycache__/
+*/*/__pycache/
+*.log
+*.pot
+*.pyc
+__pycache__/
+local_settings.py
+db.sqlite3
+venv/
