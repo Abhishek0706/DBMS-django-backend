@@ -48,8 +48,11 @@ def get_student(request):
 
     result = []
     for row in rows:
-        temp = {'enrollment_no': row[0], 'year_no': row[1], 'branch': row[2], 'email': row[3], 'full_name': row[4],
-                'phone_no': row[5], 'dateofbirth': str(row[6]), 'bhawan': row[7]}
+        # temp = {'enrollment_no': row[0], 'year_no': row[1], 'branch': row[2], 'email': row[3], 'full_name': row[4],
+        #         'phone_no': row[5], 'date_of_birth': str(row[6]), 'bhawan': row[7]}
+        temp = {'user': {'enrollment_no': row[0], 'full_name': row[4],
+                         'phone_no': row[5], 'date_of_birth': str(row[6]), 'bhawan': row[7]}, 'year_no': row[1],
+                'branch': row[2], 'email': row[3]}
         result.append(temp)
 
     json_data = json.dumps(result)
@@ -154,9 +157,15 @@ def get_worker(request):
 
     result = []
     for row in rows:
-        temp = {'enrollment_no': row[0], 'worker_role': row[1], 'full_name': row[2],
-                'phone_no': row[3], 'dateofbirth': str(row[4]), 'bhawan': row[5],
-                'salary': row[6], 'shift_start': str(row[7]), 'shift_end': str(row[8])}
+        # temp = {'enrollment_no': row[0], 'worker_role': row[1], 'full_name': row[2],
+        #         'phone_no': row[3], 'date_of_birth': str(row[4]), 'bhawan': row[5],
+        #         'salary': row[6], 'shift_start': str(row[7]), 'shift_end': str(row[8])}
+
+        temp = {
+            'user': {'enrollment_no': row[0], 'full_name': row[2], 'phone_no': row[3], 'date_of_birth': str(row[4]),
+                     'bhawan': row[5], }, 'worker_role': row[1], 'salary': row[6], 'shift_start': str(row[7]),
+            'shift_end': str(row[8])}
+
         result.append(temp)
 
     json_data = json.dumps(result)
@@ -322,9 +331,10 @@ def get_login_info(request):
             """, (enrollment_no,))
 
             data = cursor.fetchone()
-        student = {'enrollment_no': data[0], 'year_no': data[1], 'branch': data[2], 'email': data[3],
-                   'full_name': data[4],
-                   'phone_no': data[5], 'dateofbirth': str(data[6]), 'bhawan': data[7]}
+        student = {
+            'user': {'enrollment_no': data[0], 'full_name': data[4], 'phone_no': data[5], 'date_of_birth': str(data[6]),
+                     'bhawan': data[7]}, 'year_no': data[1], 'branch': data[2], 'email': data[3],
+        }
 
     with connection.cursor() as cursor:
         cursor.execute("""
@@ -348,9 +358,9 @@ def get_login_info(request):
 
             data = cursor.fetchone()
 
-        worker = {'enrollment_no': data[0], 'worker_role': data[1], 'full_name': data[2],
-                  'phone_no': data[3], 'dateofbirth': str(data[4]), 'bhawan': data[5],
-                  'salary': data[6], 'shift_start': str(data[7]), 'shift_end': str(data[8])}
+        worker = {'user': {'enrollment_no': data[0], 'full_name': data[2],
+                           'phone_no': data[3], 'date_of_birth': str(data[4]), 'bhawan': data[5],},
+                  'worker_role': data[1], 'salary': data[6], 'shift_start': str(data[7]), 'shift_end': str(data[8])}
 
     result = {'exists': exists, 'type': _type, 'student': student, 'worker': worker}
 

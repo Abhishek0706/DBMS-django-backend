@@ -43,18 +43,18 @@ def add_feedback(request):
     if request.method != 'POST':
         return HttpResponse(content='only post request allowed', status=status.HTTP_400_BAD_REQUEST)
     _data = JSONParser().parse(request)
-    student_id = _data.get('student_id', None)
+    enrollment_no = _data.get('enrollment_no', None)
     title = _data.get('title', None)
     feedback_description = _data.get('feedback_description', None)
 
-    if (student_id is None) or (title is None) or (feedback_description is None):
-        return HttpResponse(content="all data not provided : student_id, title, feedback_description",
+    if (enrollment_no is None) or (title is None) or (feedback_description is None):
+        return HttpResponse(content="all data not provided : enrollment_no, title, feedback_description",
                             status=status.HTTP_400_BAD_REQUEST)
 
     with connection.cursor() as cursor:
         cursor.execute("""
         SELECT EXISTS( SELECT * FROM public.student WHERE enrollment_no = %s);
-        """, (student_id,))
+        """, (enrollment_no,))
         row = cursor.fetchone()
     if not row[0]:
         return HttpResponse(content="student with this enrollment_no does not exists",
@@ -64,7 +64,7 @@ def add_feedback(request):
         cursor.execute("""
         INSERT INTO public.feedback (id , date_time, student_id, title, feedback_description) 
         VALUES (DEFAULT, NOW()::TIMESTAMP(0), %s, %s, %s);
-        """, (student_id, title, feedback_description))
+        """, (enrollment_no, title, feedback_description))
     connection.commit()
 
     return HttpResponse(status= status.HTTP_200_OK)
