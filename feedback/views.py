@@ -22,7 +22,7 @@ def get_feedback(request):
     else:
         with connection.cursor() as cursor:
             cursor.execute("""
-            SELECT id, date_time, enrollment_no, title, feedback_description 
+            SELECT id, date_time, public.feedback.enrollment_no, title, feedback_description 
             FROM public.feedback INNER JOIN public.userdata 
             ON public.feedback.enrollment_no=public.userdata.enrollment_no 
             WHERE LOWER(bhawan) LIKE LOWER(%s) ;
