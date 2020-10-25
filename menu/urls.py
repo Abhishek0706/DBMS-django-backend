@@ -4,5 +4,5 @@ from menu import views
 
 urlpatterns = [
     path('', views.MenuByDay.as_view(), name='day'),
-    path('add', views.MenuAdd.as_view(), name='add')
+    path('add/', views.MenuAdd.as_view(), name='add')
 ]
