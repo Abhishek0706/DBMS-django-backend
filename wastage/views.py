@@ -10,6 +10,8 @@ from django.db.utils import IntegrityError
 class DailyWastageView(APIView):
     def post(self, request):
         data = JSONParser().parse(request)
+        if not all(x in data for x in ['week_number', 'year_number']):
+            return Response("week_number and/or year_number is missing", status=status.HTTP_400_BAD_REQUEST)
         weekly_wastage = WastageSerializer.from_week_year(**data)
         return Response(weekly_wastage.data)
 

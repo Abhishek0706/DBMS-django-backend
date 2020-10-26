@@ -13,7 +13,7 @@ class WastageSerializer(serializers.Serializer):
 
 
     @classmethod
-    def from_week_year(cls, week_no: int, year_no: int, **kwargs):
-        week_no = int(week_no)
-        year_no = int(year_no)
-        return cls(DailyWastage.from_week_year(week_no, year_no), many=True)
+    def from_week_year(cls, week_number: int, year_number: int, **kwargs):
+        week_number = int(week_number)
+        year_number = int(year_number)
+        return cls(DailyWastage.from_week_year(week_number, year_number), many=True)
