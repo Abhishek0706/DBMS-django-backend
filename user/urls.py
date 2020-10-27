@@ -15,5 +15,7 @@ urlpatterns = [
     path('worker/add/', views.add_worker, name='add_worker'),
     path('workerrole/', views.get_workerrole, name='get_workerrole'),
     path('workerrole/add/', views.add_workerrole, name='add_workerrole'),
+    path('workerrole/del/', views.del_workerrole, name='del_workerrole'),
+    path('workerrole/update/', views.update_workerrole, name='update_workerrole'),
     path('login/', views.get_login_info, name='get_login_info'),
 ]

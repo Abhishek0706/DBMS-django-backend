@@ -104,7 +104,7 @@ def add_student(request):
 
     connection.commit()
 
-    return HttpResponse(status=status.HTTP_200_OK)
+    return HttpResponse(content="student added",status=status.HTTP_200_OK)
 
 
 def get_worker(request):
@@ -219,7 +219,7 @@ def add_worker(request):
 
     connection.commit()
 
-    return HttpResponse(status=status.HTTP_200_OK)
+    return HttpResponse(content="worker added",status=status.HTTP_200_OK)
 
 
 def get_workerrole(request):
@@ -297,7 +297,95 @@ def add_workerrole(request):
 
     connection.commit()
 
-    return HttpResponse(status=status.HTTP_200_OK)
+    return HttpResponse(content="workerrole added", status=status.HTTP_200_OK)
+
+
+def del_workerrole(request):
+    if request.method != 'POST':
+        return HttpResponse(content='only post request allowed', status=status.HTTP_400_BAD_REQUEST)
+
+    _data = JSONParser().parse(request)
+
+    worker_role = _data.get('worker_role', None)
+
+    if worker_role is None:
+        return HttpResponse(content="worker_role is required", status=status.HTTP_400_BAD_REQUEST)
+
+    with connection.cursor() as cursor:
+        cursor.execute("""
+        SELECT EXISTS (SELECT * FROM public.workerrole WHERE LOWER(worker_role) LIKE LOWER(%s));
+        """, (worker_role,))
+        row = cursor.fetchone()
+
+    if not row[0]:
+        return HttpResponse(content='this workerrole does not exists', status=status.HTTP_400_BAD_REQUEST)
+
+    with connection.cursor() as cursor:
+        cursor.execute("""
+        DELETE FROM public.workerrole 
+        WHERE LOWER(public.workerrole.worker_role) LIKE LOWER(%s) ;
+        """, (worker_role,))
+
+    connection.commit()
+
+    return HttpResponse(content="workerrole deleted", status=status.HTTP_200_OK)
+
+
+def update_workerrole(request):
+    if request.method != 'POST':
+        return HttpResponse(content='only post request allowed', status=status.HTTP_400_BAD_REQUEST)
+
+    _data = JSONParser().parse(request)
+
+    worker_role = _data.get('worker_role', None)
+    salary = _data.get('salary', None)
+    shift_start = _data.get('shift_start', None)
+    shift_end = _data.get('shift_end', None)
+
+    if worker_role is None:
+        return HttpResponse(content="worker_role is required", status=status.HTTP_400_BAD_REQUEST)
+
+    with connection.cursor() as cursor:
+        cursor.execute("""
+        SELECT EXISTS (SELECT * FROM public.workerrole WHERE LOWER(worker_role) LIKE LOWER(%s));
+        """, (worker_role,))
+        row = cursor.fetchone()
+
+    if not row[0]:
+        return HttpResponse(content='this workerrole does not exists', status=status.HTTP_400_BAD_REQUEST)
+
+    if (salary is None) and (shift_start is None) and (shift_end is None):
+        return HttpResponse(content="atleast one field is required : salary, shift_start, shift_end",
+                            status=status.HTTP_400_BAD_REQUEST)
+    if salary is not None:
+        try:
+            salary = float(salary)
+        except ValueError:
+            return HttpResponse(content='salary can not convert into float', status=status.HTTP_400_BAD_REQUEST)
+
+    raw_query = "UPDATE public.workerrole SET "
+    tuple = ()
+    if salary is not None:
+        raw_query += "salary = %s,"
+        tuple += (salary,)
+    if shift_start is not None:
+        raw_query += "shift_start = %s,"
+        tuple += (shift_start,)
+    if shift_end is not None:
+        raw_query += "shift_end = %s,"
+        tuple += (shift_end,)
+
+    raw_query = raw_query[:-1]
+
+    raw_query += "WHERE LOWER(worker_role) LIKE LOWER(%s)"
+    tuple += (worker_role,)
+
+    with connection.cursor() as cursor:
+        cursor.execute(raw_query, tuple)
+
+    connection.commit()
+
+    return HttpResponse(content="workerrole updated", status=status.HTTP_200_OK)
 
 
 def get_login_info(request):
@@ -359,7 +447,7 @@ def get_login_info(request):
             data = cursor.fetchone()
 
         worker = {'user': {'enrollment_no': data[0], 'full_name': data[2],
-                           'phone_no': data[3], 'date_of_birth': str(data[4]), 'bhawan': data[5],},
+                           'phone_no': data[3], 'date_of_birth': str(data[4]), 'bhawan': data[5], },
                   'worker_role': data[1], 'salary': data[6], 'shift_start': str(data[7]), 'shift_end': str(data[8])}
 
     result = {'exists': exists, 'type': _type, 'student': student, 'worker': worker}
