@@ -74,7 +74,7 @@ def del_feedback(request):
     if request.method != 'POST':
         return HttpResponse(content='only post request allowed', status=status.HTTP_400_BAD_REQUEST)
     _data = JSONParser().parse(request)
-    _id = _data.get('enrollment_no', None)
+    _id = _data.get('id', None)
     if _id is None:
         return HttpResponse(content="all data not provided : id", status=status.HTTP_400_BAD_REQUEST)
 
